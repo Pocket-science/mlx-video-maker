@@ -1,0 +1,23 @@
+# Output files
+output/*
+!output/.gitkeep
+*.mp4
+*.wav
+*.jpg
+*_lastframe.jpg
+concat_list.txt
+generation.log
+nohup.out
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
