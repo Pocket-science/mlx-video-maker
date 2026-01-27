@@ -2,6 +2,7 @@
 output/*
 !output/.gitkeep
 *.mp4
+!examples/*.mp4
 *.wav
 *.jpg
 *_lastframe.jpg
