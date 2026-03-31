@@ -28,11 +28,13 @@ if [ -z "$_MLX_BG" ] && [ -t 0 ]; then
 fi
 
 # Default settings
-WIDTH=1920
-HEIGHT=1088
+WIDTH=1280
+HEIGHT=768
 FRAMES=121
 STRENGTH=0.7
 FPS=24
+PIPELINE="dev-two-stage-hq"
+MODEL_REPO="prince-canuma/LTX-2.3-dev"
 VENV_PYTHON="${VENV_PYTHON:-./venv/bin/python}"
 OUTPUT_DIR="$HOME/Nextcloud/Documents/mlx-video-stories"
 
@@ -85,6 +87,8 @@ while [ $# -gt 0 ]; do
         --frames) FRAMES="$2"; shift 2 ;;
         --strength) STRENGTH="$2"; shift 2 ;;
         --fps) FPS="$2"; shift 2 ;;
+        --pipeline) PIPELINE="$2"; shift 2 ;;
+        --model-repo) MODEL_REPO="$2"; shift 2 ;;
         --python) VENV_PYTHON="$2"; shift 2 ;;
         *) echo "Unknown option: $1"; usage ;;
     esac
@@ -158,7 +162,8 @@ for i in $(seq 1 $NUM_SCENES); do
         # First scene: Text-to-Video
         $VENV_PYTHON -m mlx_video.models.ltx_2.generate \
             --prompt "$PROMPT" \
-            --model-repo prince-canuma/LTX-2.3-distilled \
+            --pipeline $PIPELINE \
+            --model-repo $MODEL_REPO \
             --text-encoder-repo google/gemma-3-12b-it \
             --height $HEIGHT \
             --width $WIDTH \
@@ -187,7 +192,8 @@ for i in $(seq 1 $NUM_SCENES); do
         # Generate with I2V
         $VENV_PYTHON -m mlx_video.models.ltx_2.generate \
             --prompt "$PROMPT" \
-            --model-repo prince-canuma/LTX-2.3-distilled \
+            --pipeline $PIPELINE \
+            --model-repo $MODEL_REPO \
             --text-encoder-repo google/gemma-3-12b-it \
             --image "$LAST_FRAME" \
             --image-strength $STRENGTH \
