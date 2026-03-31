@@ -1,0 +1,8 @@
+# Quick LTX 2.3 test - 3 scenes, low res
+# Testing: T2V, I2V continuity, audio consistency
+
+A wide establishing shot of a quiet cobblestone alley in a European village at dawn. Warm golden light spills between old brick buildings with wooden shutters. A tabby cat sits on a windowsill grooming itself. The camera slowly pushes forward through the alley. Soft ambient sound of distant church bells and birdsong.
+
+A medium tracking shot follows the tabby cat as it leaps from the windowsill and trots along the cobblestones. Morning light casts long shadows across the wet stones. The camera tracks alongside the cat at ground level. Sound of soft paws on stone and gentle wind rustling through hanging laundry.
+
+A close-up shot of the tabby cat stopping at a wooden door and looking up expectantly. The door creaks open revealing a warm interior with a fireplace glow. The cat slips inside. The camera holds steady at the doorway. Sound of a creaking door hinge and a crackling fireplace inside.

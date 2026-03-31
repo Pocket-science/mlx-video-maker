@@ -7,6 +7,26 @@
 
 set -e
 
+# Auto-background: re-exec under nohup if not already backgrounded
+if [ -z "$_MLX_BG" ] && [ -t 0 ]; then
+    export _MLX_BG=1
+    # Determine log file location (need to peek at args for output dir)
+    _LOG_DIR="$HOME/Nextcloud/Documents/mlx-video-stories"
+    for _arg in "$@"; do
+        if [ -n "$_NEXT_IS_DIR" ]; then _LOG_DIR="$_arg"; unset _NEXT_IS_DIR; break; fi
+        [[ "$_arg" == --* ]] && break
+        [ "$_SEEN_STORY" = "1" ] && _LOG_DIR="$_arg" && break
+        _SEEN_STORY=1
+    done
+    mkdir -p "$_LOG_DIR"
+    _LOG="$_LOG_DIR/generation.log"
+    echo "Running in background. Log: $_LOG"
+    echo "Follow with: tail -f $_LOG"
+    nohup "$0" "$@" > "$_LOG" 2>&1 &
+    echo "PID: $!"
+    exit 0
+fi
+
 # Default settings
 WIDTH=1920
 HEIGHT=1088
@@ -14,7 +34,7 @@ FRAMES=121
 STRENGTH=0.7
 FPS=24
 VENV_PYTHON="${VENV_PYTHON:-./venv/bin/python}"
-OUTPUT_DIR="./output"
+OUTPUT_DIR="$HOME/Nextcloud/Documents/mlx-video-stories"
 
 # Colors
 RED='\033[0;31m'
@@ -136,13 +156,16 @@ for i in $(seq 1 $NUM_SCENES); do
 
     if [ $i -eq 1 ]; then
         # First scene: Text-to-Video
-        $VENV_PYTHON -m mlx_video.generate_av \
+        $VENV_PYTHON -m mlx_video.models.ltx_2.generate \
             --prompt "$PROMPT" \
+            --model-repo prince-canuma/LTX-2.3-distilled \
+            --text-encoder-repo google/gemma-3-12b-it \
             --height $HEIGHT \
             --width $WIDTH \
             --num-frames $FRAMES \
             --fps $FPS \
             --seed $((42 + i)) \
+            --audio \
             --output-path "$SCENE_FILE"
     else
         # Subsequent scenes: Image-to-Video
@@ -162,8 +185,10 @@ for i in $(seq 1 $NUM_SCENES); do
         fi
 
         # Generate with I2V
-        $VENV_PYTHON -m mlx_video.generate_av \
+        $VENV_PYTHON -m mlx_video.models.ltx_2.generate \
             --prompt "$PROMPT" \
+            --model-repo prince-canuma/LTX-2.3-distilled \
+            --text-encoder-repo google/gemma-3-12b-it \
             --image "$LAST_FRAME" \
             --image-strength $STRENGTH \
             --height $HEIGHT \
@@ -171,6 +196,7 @@ for i in $(seq 1 $NUM_SCENES); do
             --num-frames $FRAMES \
             --fps $FPS \
             --seed $((42 + i)) \
+            --audio \
             --output-path "$SCENE_FILE"
     fi
 
